@@ -1,0 +1,177 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>666</title>
+<link rel="stylesheet" href="./Css/index.css" />
+  <script src="Js/vue.js"></script>
+  <script src="Js/vue-resource.js"></script>
+  <style>
+    [v-cloak]{
+      display: none;
+    }
+  </style>
+  <script>
+    window.onload=function(){
+      let vm=new Vue({
+        el:'#app',
+        data:{
+          sendFrame:'',
+          username:'',
+          content:'',
+          arr:[],
+          zIndex:100
+        },
+        methods:{
+          send(){
+            this.sendFrame='none';
+            let url=`wish.php?act=add&username=${this.username}&content=${this.content}`;
+            this.$http.get(url).then((res)=>{
+              //{error:1, msg:xxx, id: 心愿ID, time: 1435567718}
+              //alert(typeof res.data);
+              let json=eval('('+res.data+')');
+              console.log(json);
+              if(json.error==0){
+                this.arr.push({
+                  id:json.id,
+                  time:json.time*1000,
+                  username:this.username,
+                  content:this.content
+                });
+              }else{
+                alert(json.msg);
+              }
+            },(res)=>{
+              console.log('send:',res.status);
+            })
+          },
+          del(id,index){
+            //wish.php?act=delete&id=0
+            let bl=confirm('确定删除');
+            if(!bl) return;
+            this.$http.get('wish.php?act=delete&id='+id)
+              .then((res)=>{
+                //{error:1, msg:xxx}
+                let json=eval('('+res.data+')');
+                if(json.error==0){
+                  this.arr.splice(index,1);
+                }else{
+                  alert('删除失败:',json.msg)
+                }
+              })
+          }
+        },
+        filters:{
+          date(input){
+            let d=new Date();
+            d.setTime(input);
+            return d;
+          },
+          number(input){
+            if(input<10) return 'NO.000'+input;
+            if(input>=10&&input<100) return 'NO.00'+input;
+            if(input>=100&&input<1000) return 'NO.0'+input;
+            if(input>=1000&&input<10000) return 'NO.'+input;
+          }
+        },
+        directives:{
+          wish:{
+            inserted:function(el,binding){
+              let rnd=function(n,m){return parseInt(n+Math.random()*(m-n))};
+              el.style.left=rnd(0,document.documentElement.clientWidth-el.offsetWidth)+'px';
+              el.style.top=rnd(0,document.documentElement.clientHeight-el.offsetHeight-125)+'px';
+              el.className='paper a'+rnd(1,6);
+            }
+          },
+          drag(el){
+            //let _this=this; //window
+            let oDt=el.children[0];
+            oDt.onmousedown=function(ev){
+              el.style.zIndex=vm.zIndex++;
+              let disX=ev.clientX-el.offsetLeft;
+              let disY=ev.clientY-el.offsetTop;
+              document.onmousemove=function(ev){
+                let l=ev.clientX-disX;
+                let t=ev.clientY-disY;
+                //限定
+                if(l<0) l=0;
+                if(l>document.documentElement.clientWidth-el.offsetWidth)
+                   l=document.documentElement.clientWidth-el.offsetWidth;
+                if(t<0) t=0;
+                if(t>document.documentElement.clientHeight-el.offsetHeight-125)
+                  t=document.documentElement.clientHeight-el.offsetHeight-125;
+                el.style.left=l+'px';
+                el.style.top=t+'px';
+              };
+              document.onmouseup=function(){
+                document.onmousemove=document.onmouseup=null;
+              };
+              return false;
+            }
+          }
+        },
+        mounted(){
+          this.$http.get('wish.php?act=get')
+            .then((res)=>{
+              let json=eval('('+res.data+')');
+              if(json.error==0){
+                this.arr=json.msg;
+              }else{
+                alert('获取数据失败')
+              }
+            })
+        }
+      });
+    };
+  </script>
+</head>
+<body>
+<div id="app">
+  <div id="top">
+    <span id="send" @click="sendFrame='block'"></span>
+  </div>
+  <div id="main">
+    <dl v-cloak class="paper a1" v-for="(item,index) in arr" v-wish v-drag :key="item.id">
+      <dt>
+        <span class="username">{{item.username}}</span>
+        <span class="num">{{item.id|number}}</span>
+      </dt>
+      <dd class="content">{{item.content}}</dd>
+      <dd class="bottom">
+        <span class="time">{{item.time|date}}</span>
+        <a href="javascript:;" class="close" @click="del(item.id,index)"></a>
+      </dd>
+    </dl>
+
+  </div>
+
+  <div id="send-form" :style="{display: sendFrame}">
+    <p class="title"><span>许下你的愿望</span><a href="javascript:;" id="close" @click="sendFrame='none'"></a></p>
+    <form action="" name="wish">
+      <p>
+        <label for="username">昵称：</label>
+        <input type="text" name="username" id="username"  v-model="username"/>
+      </p>
+      <p>
+        <label for="content">愿望：(您还可以输入&nbsp;<span id="font-num">50</span>&nbsp;个字)</label>
+        <textarea name="content" id="content" v-model="content"></textarea>
+      <div id="phiz">
+        <img src="./Images/phiz/zhuakuang.gif" alt="抓狂" />
+        <img src="./Images/phiz/baobao.gif" alt="抱抱" />
+        <img src="./Images/phiz/haixiu.gif" alt="害羞" />
+        <img src="./Images/phiz/ku.gif" alt="酷" />
+        <img src="./Images/phiz/xixi.gif" alt="嘻嘻" />
+        <img src="./Images/phiz/taikaixin.gif" alt="太开心" />
+        <img src="./Images/phiz/touxiao.gif" alt="偷笑" />
+        <img src="./Images/phiz/qian.gif" alt="钱" />
+        <img src="./Images/phiz/huaxin.gif" alt="花心" />
+        <img src="./Images/phiz/jiyan.gif" alt="挤眼" />
+      </div>
+      </p>
+      <span id="send-btn" @click="send"></span>
+    </form>
+  </div>
+</div>
+
+</body>
+</html>

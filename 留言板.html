@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>666</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <style>
+    * {
+      font-family: 微软雅黑;
+    }
+
+  </style>
+
+  <script src="js/vue.js"></script>
+</head>
+<body>
+
+<div id="app">
+  <input type="text" v-model="inputValue">
+  <input type="button" value="添加" @click="add">
+  <input type="button" value="删除所有" @click="delAll">
+  <ul>
+    <li v-for="(item,index) in list" :key="item.id" :style="{background:item.color}">
+      {{item.value}}
+      <input type="button" value="X" @click="del(index)">
+      <input type="button" value="改色" @click="changeColor(index)">
+    </li>
+  </ul>
+</div>
+<script>
+
+  new Vue({
+    el:'#app',
+    data:{
+      inputValue:'',
+      id:1,
+      list:[
+//        {value:'',id:0,color:''}
+      ]
+    },
+    methods:{
+      add:function(){
+        this.list.push({
+          value:this.inputValue,
+          id:this.id++,
+          color:''
+        });
+        this.inputValue='';
+      },
+      delAll(){
+        this.list=[];
+      },
+      del(index){
+        //alert(index);
+        this.list.splice(index,1);
+      },
+      changeColor:function(index){
+//        alert(ev.target);
+//        ev.target.parentNode.style.background='red';
+//        ev.srcElement.parentNode.style.background='red';
+        this.list[index].color='red'
+      }
+    }
+  });
+
+</script>
+</body>
+</html>
