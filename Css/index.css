@@ -4,6 +4,7 @@
 }
 img {
 	border:none;
+	
 }
 ul {
 	list-style: none;
@@ -30,6 +31,8 @@ body{
 	background: #fff;
 	display: none;
 	position: absolute;
+	left: 32%;;
+	top: 93px;
 	z-index: 999;
 }
 #send-form form p {
@@ -45,6 +48,7 @@ body{
 	line-height: 24px;
 	color: #888888;
 }
+
 #font-num {
 	font-family :'Constantia,Georgia';
 	font-size: 18px;

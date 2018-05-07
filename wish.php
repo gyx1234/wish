@@ -23,8 +23,8 @@ function echo_str($str){
 
 $link=@mysql_connect('localhost','root','') or mysql_connect('localhost','root','admin');
 mysql_query("set names 'utf8'");
-mysql_query('CREATE database zns_wish');
-mysql_select_db('zns_wish');
+mysql_query('CREATE database GYX_wish');
+mysql_select_db('GYX_wish');
 
 
 mysql_query("CREATE TABLE `wish` (
@@ -45,7 +45,7 @@ switch($act){
 			echo_str('{error:1, msg:"内容不能为空"}');
 			exit;	
 		}
-		$i_sql="INSERT INTO  `zns_wish`.`wish` (`ID` ,`username` ,`content`,`time`) VALUES (NULL ,  '".$username."',  '".$content."',".time().")";
+		$i_sql="INSERT INTO  `GYX_wish`.`wish` (`ID` ,`username` ,`content`,`time`) VALUES (NULL ,  '".$username."',  '".$content."',".time().")";
 		mysql_query($i_sql);
 		
 		$res=mysql_query("SELECT LAST_INSERT_ID() AS ID;");
@@ -69,7 +69,7 @@ switch($act){
 			);
 		}
 		if(empty($msg)){
-			echo_str('{error:1, msg:"还没有人发表心愿"}');
+			echo_str('{error:1, msg:"还没有人发表心愿!"}');
 			exit;	
 		}
 		echo_str('{error:0, msg:'.json_encode($msg).'}');
@@ -78,7 +78,7 @@ switch($act){
 	case 'delete':
 		$id=$_GET['id'];
 		if(empty($id)){
-			echo_str('{error:1, msg:"您拼凑的接口有问题"}');
+			echo_str('{error:1, msg:"接口有问题"}');
 			exit;	
 		}
 		$d_sql="DELETE FROM wish WHERE id=".$id;
